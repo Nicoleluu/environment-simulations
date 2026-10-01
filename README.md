@@ -23,3 +23,9 @@ The request did not include its referenced semantic specification and the linked
 Choose a toolbar tool and click a parcel, or use the keyboard-accessible parcel selector. Number keys 1–4 change tools. Drag to orbit, right-drag to pan, scroll to zoom. Camera buttons offer zoom, top view, and reset. Undo includes resets. Edits exist in memory for the current page session.
 
 `model.js` contains the rules independently of the renderer. `app.js` renders procedural buildings, trees, roads, and residents and connects UI actions. Replace the demo model when the intended specification is available.
+
+## Deployment
+
+GitHub Pages serves this application directly from the root of `main`. Pushes to `main` automatically publish updates. `.nojekyll` preserves the plain static files without Jekyll processing.
+
+Live site: https://nicoleluu.github.io/environment-simulations/
