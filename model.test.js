@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createExample,changeParcel,summarize} from './model.js';
+test('example contains valid single-use parcels and bounded occupancy',()=>{const p=createExample();assert.equal(p.length,16);assert.equal(new Set(p.map(p=>p.id)).size,16);p.forEach(p=>assert.ok(p.residents>=0&&p.residents<=p.capacity&&(p.use==='home'||p.residents===0)));assert.equal(summarize(p).parks,3);});
+test('development requires vacancy and street access, without mutating input',()=>{const p=createExample();assert.throws(()=>changeParcel(p,1,'home'));const next=changeParcel(p,6,'home');assert.equal(next[5].use,'home');assert.equal(p[5].use,'vacant');p[5].streetAccess=false;assert.throws(()=>changeParcel(p,6,'park'));});
+test('resident lifecycle enforces capacity and clearing restrictions',()=>{let p=changeParcel(createExample(),6,'home');for(let i=0;i<4;i++)p=changeParcel(p,6,'in');assert.throws(()=>changeParcel(p,6,'in'));assert.throws(()=>changeParcel(p,6,'clear'));for(let i=0;i<4;i++)p=changeParcel(p,6,'out');assert.throws(()=>changeParcel(p,6,'out'));p=changeParcel(p,6,'clear');p=changeParcel(p,6,'park');assert.throws(()=>changeParcel(p,6,'in'));assert.equal(p[5].residents,0);});
+test('empty neighborhood statistics stay finite',()=>{const p=createExample().map(p=>({...p,use:'vacant',residents:0}));assert.deepEqual(summarize(p),{homes:0,residents:0,parks:0,occupancy:0});});
