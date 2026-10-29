@@ -1,5 +1,5 @@
 import {createExample} from './model.js';
-import {distanceBetween,applyScenario,locationFor} from './distance-model.js';
+import {distanceBetween,applyScenario,locationFor} from './distance-model.js?v=4';
 
 export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  const shell=document.createElement('div');shell.className='distance-shell';shell.innerHTML=`
