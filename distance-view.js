@@ -18,7 +18,7 @@ export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  <p id="distance-finding" aria-live="polite"></p><p id="distance-units">Both bars use a fixed 0–80 model-unit scale. Units are schematic, not measured meters. Lines compare the same parcel centers in plan.</p></section>
  <div class="distance-footer"><p>Nicole Lu · Spatial AI · October 2026</p><div class="distance-view-controls"><button id="d-top">Plan view</button><button id="d-perspective">3D view</button><button id="d-zoom-in" aria-label="Zoom in">＋</button><button id="d-zoom-out" aria-label="Zoom out">−</button></div></div>`;
  document.body.append(shell);
- const $=id=>document.getElementById(id);let current=createExample(),result,group,frame=0;
+ const $=id=>document.getElementById(id);let current=createExample(),result,group,frame=0,birdFrame=0;
  function populate(){const people=$('d-mode').value==='people';for(const [id,defaultParcel] of [['d-a',1],['d-b',5]]){
  const el=$(id),old=el.value;el.replaceChildren();const entries=people?current.residents.map(r=>[r.id,`${r.name} (${r.id}) · P${locationFor(current,r.id).id}`]):current.parcels.map(p=>['P:'+p.id,`P${p.id} · ${p.use==='home'?'Home':p.use==='park'?'Park':'Vacant'}`]);
  for(const [v,t] of entries){const o=document.createElement('option');o.value=v;o.textContent=t;el.append(o);}
@@ -27,7 +27,7 @@ export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  function clear(){if(group){scene.remove(group);group.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose();}});}group=new THREE.Group();scene.add(group);}
  function line(points,color,dashed=false,width=.085){for(let i=1;i<points.length;i++){const p=points[i-1],q=points[i],length=Math.hypot(q[0]-p[0],q[1]-p[1]);if(!length)continue;const step=dashed?1.1:length;for(let start=0;start<length;start+=step){const end=Math.min(length,start+(dashed?.65:length)),a=start/length,b=end/length;const from=new THREE.Vector3(p[0]+(q[0]-p[0])*a,.65,p[1]+(q[1]-p[1])*a),to=new THREE.Vector3(p[0]+(q[0]-p[0])*b,.65,p[1]+(q[1]-p[1])*b);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(width,width,to.distanceTo(from),8),new THREE.MeshBasicMaterial({color,depthTest:false}));mesh.position.copy(from).add(to).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),to.clone().sub(from).normalize());mesh.renderOrder=dashed?22:21;group.add(mesh);}}}
  function pin(p,label,color){const c=document.createElement('canvas');c.width=128;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle=color;ctx.beginPath();ctx.arc(64,64,49,0,Math.PI*2);ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=7;ctx.stroke();ctx.fillStyle='white';ctx.font='bold 58px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,64,66);const texture=new THREE.CanvasTexture(c);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:false}));sprite.position.set(p.x,5,p.z);sprite.scale.set(2.8,2.8,1);sprite.renderOrder=30;group.add(sprite);}
- function stop(){cancelAnimationFrame(frame);}
+ function stop(){cancelAnimationFrame(frame);cancelAnimationFrame(birdFrame);}
  function person(color){
  const body=new THREE.Group(),limbs=[];
  function part(geometry,color,x,y,z,parent=body){const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color,depthTest:false}));mesh.position.set(x,y,z);mesh.renderOrder=35;parent.add(mesh);return mesh;}
@@ -63,13 +63,37 @@ export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  });frame=requestAnimationFrame(tick);
  }frame=requestAnimationFrame(tick);
  }
+ function flyPigeon(){
+ const bird=new THREE.Group(),wings=[];
+ function piece(geometry,color,x,y,z,parent=bird){const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color,roughness:.8,depthTest:false}));mesh.position.set(x,y,z);mesh.renderOrder=36;parent.add(mesh);return mesh;}
+ piece(new THREE.SphereGeometry(.36,16,12),0xffffff,0,0,0).scale.set(.8,1,1.5);
+ piece(new THREE.SphereGeometry(.25,12,10),0xffffff,0,.26,.48);
+ const beak=piece(new THREE.ConeGeometry(.085,.24,8),0xd6a34a,0,.23,.77);beak.rotation.x=Math.PI/2;
+ for(const side of [-1,1]){
+ piece(new THREE.SphereGeometry(.035,8,6),0x263e49,side*.18,.33,.62);
+ const wing=new THREE.Group();wing.position.set(side*.18,.12,0);bird.add(wing);
+ const feathers=piece(new THREE.SphereGeometry(1,12,8),0xf7fafc,side*.48,0,-.08,wing);feathers.scale.set(.75,.065,.34);feathers.rotation.y=side*.25;wings.push(wing);
+ }
+ const tail=piece(new THREE.BoxGeometry(.45,.08,.42),0xe9f0f4,0,.03,-.65);tail.rotation.x=-.2;
+ piece(new THREE.BoxGeometry(.34,.22,.06),0xffffff,0,-.35,.24);
+ piece(new THREE.SphereGeometry(.055,8,6),0xa94878,0,-.35,.28);
+ bird.scale.setScalar(1.6);group.add(bird);
+ const {a,b,direct}=result,started=performance.now();
+ const note=document.createElement('span');note.textContent=' White mail pigeon: straight-line flight above the streets.';$('d-status').append(note);
+ function tick(now){const time=(now-started)/1000,phase=direct?(time*3.2)%(direct*2):0,forward=phase<direct,t=direct?(forward?phase:direct*2-phase)/direct:0;
+ bird.position.set(a.x+(b.x-a.x)*t,7+Math.sin(time*3)*.12,a.z+(b.z-a.z)*t);
+ bird.rotation.y=Math.atan2((b.x-a.x)*(forward?1:-1),(b.z-a.z)*(forward?1:-1));
+ wings[0].rotation.z=Math.sin(time*10)*.65;wings[1].rotation.z=-Math.sin(time*10)*.65;
+ birdFrame=requestAnimationFrame(tick);
+ }birdFrame=requestAnimationFrame(tick);
+ }
  function update(){stop();clear();result=distanceBetween(current,$('d-a').value,$('d-b').value);if(!result)return;const {a,b,direct,walking,ratio}=result;
  $('d-pair').textContent=`A: P${a.id} / B: P${b.id}`;$('d-direct').textContent=direct.toFixed(1);$('d-walk').textContent=Number.isFinite(walking)?walking.toFixed(1):'No route';$('d-walk-unit').textContent=Number.isFinite(walking)?'units':'';
  $('d-direct-bar').style.width=Math.min(100,direct/80*100)+'%';$('d-walk-bar').style.width=Number.isFinite(walking)?Math.min(100,walking/80*100)+'%':'0%';
  $('distance-finding').textContent=!Number.isFinite(walking)?`Only ${direct.toFixed(1)} units apart in plan, but no open walking route connects these locations.`:direct===0?'Both occupants or locations share one parcel center. Both distances are zero.':`The walk is ${ratio.toFixed(1)}× the straight-line distance: ${(walking-direct).toFixed(1)} extra units through the street network.`;
  for(const street of current.streets.filter(s=>!s.open))line([street.a.split(',').map(Number),street.b.split(',').map(Number)],0xe89522,false,.22);
  line([[a.x,a.z],[b.x,b.z]],0xa94878,true);if(result.points.length>1)line(result.points,0x176f99);pin(a,'A','#a0386c');pin(b,'B','#176f99');
- walkResidents();
+ walkResidents();flyPigeon();
  }
  function scenario(){
  current=applyScenario(createExample(),$('d-scenario').value,$('d-a').value,$('d-b').value);setState(current);update();
