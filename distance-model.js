@@ -35,10 +35,34 @@ export function distanceBetween(state, fromKey, toKey) {
   return {direct,walking,points:ids.map(id=>positions.get(id)),streetIds:ids.filter(id=>state.streets.some(s=>s.id===id)),a,b,ratio:direct?walking/direct:null};
 }
 
-export function applyScenario(state,scenario){
-  // Demonstration closures are a view overlay: the saved neighborhood stays intact.
+export function applyScenario(state,scenario,fromKey='P:1',toKey='P:5'){
   const copy=structuredClone(state);
-  if(scenario==='detour')for(const id of ['V:-16:-4','V:-8:-4']){const s=copy.streets.find(s=>s.id===id);if(s)s.open=false;}
-  if(scenario==='isolated'){const s=copy.streets.find(s=>s.id==='H:-12:0');if(s)s.open=false;}
+  const a=locationFor(copy,fromKey),b=locationFor(copy,toKey);
+  if(!a||!b||scenario==='existing')return copy;
+  if(scenario==='isolated'){
+    copy.streets.find(s=>s.id===frontageId(b)).open=false;
+  }
+  if(scenario==='detour'){
+    // Rank nearby street pairs by proximity to the selected homes. Keep their
+    // entrance streets open, preferring a pair that causes a reachable detour.
+    const fronts=[frontageId(a),frontageId(b)];
+    const candidates=copy.streets.filter(s=>s.open&&!fronts.includes(s.id)).map(s=>{
+      const p=s.a.split(',').map(Number),q=s.b.split(',').map(Number);
+      const x=(p[0]+q[0])/2,z=(p[1]+q[1])/2;
+      return {s,score:Math.min(Math.hypot(x-a.x,z-a.z),Math.hypot(x-b.x,z-b.z))};
+    }).filter(v=>v.score<=12);
+    const pairs=[];
+    for(let i=0;i<candidates.length;i++)for(let j=i+1;j<candidates.length;j++)pairs.push({streets:[candidates[i].s,candidates[j].s],score:candidates[i].score+candidates[j].score});
+    pairs.sort((a,b)=>a.score-b.score);
+    const baseline=distanceBetween(copy,fromKey,toKey).walking;
+    let chosen=pairs[0];
+    for(const pair of pairs){
+      pair.streets.forEach(s=>s.open=false);
+      const walk=distanceBetween(copy,fromKey,toKey).walking;
+      pair.streets.forEach(s=>s.open=true);
+      if(Number.isFinite(walk)&&walk>baseline){chosen=pair;break;}
+    }
+    chosen?.streets.forEach(s=>s.open=false);
+  }
   return copy;
 }

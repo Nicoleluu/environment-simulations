@@ -36,3 +36,14 @@ test('custom closures reroute other pairs and reopening restores access',()=>{
  assert.equal(route().walking,Infinity);assert.deepEqual(route().streetIds,[]);
  state.streets.forEach(s=>s.open=true);assert.equal(route().walking,32);
 });
+test('scenario closures follow the selected pair and occupant home',()=>{
+ const state=createExample(),original=JSON.stringify(state);
+ const selected=applyScenario(state,'detour','P:2','P:10');
+ assert.equal(selected.streets.filter(s=>!s.open).length,2);
+ assert.ok(distanceBetween(selected,'P:2','P:10').walking>32);
+ assert.notDeepEqual(selected.streets.filter(s=>!s.open).map(s=>s.id),applyScenario(state,'detour').streets.filter(s=>!s.open).map(s=>s.id));
+ assert.equal(distanceBetween(applyScenario(state,'isolated','P:2','P:10'),'P:2','P:10').walking,Infinity);
+ const occupant=state.residents.find(r=>state.buildings.find(b=>b.id===r.buildingId).parcelId===10);
+ assert.equal(distanceBetween(applyScenario(state,'isolated','P:2',occupant.id),'P:2',occupant.id).walking,Infinity);
+ assert.equal(JSON.stringify(state),original);
+});
