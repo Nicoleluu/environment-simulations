@@ -9,7 +9,7 @@ export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  <label>Location A<select id="d-a"></select></label><label>Location B<select id="d-b"></select></label>
  <label>Street scenario<select id="d-scenario"><option value="existing">Open network</option><option value="detour">Two street closures near A–B</option><option value="isolated">B frontage closed</option></select></label>
  <p id="d-closures" aria-live="polite"></p>
- <div class="actions"><button id="d-animate" class="primary">Animate route</button><button id="d-record">Record animation</button></div><p id="d-status" class="distance-status" role="status"></p>
+ <div class="actions"><button id="d-animate" class="primary">Animate route</button></div><p id="d-status" class="distance-status" role="status"></p>
  <details><summary>Metric definitions & assumptions</summary><p><b>Straight-line distance</b> is √((xB−xA)² + (zB−zA)²), measured in plan.</p><p><b>Walking distance</b> is the shortest weighted path through open streets, including each parcel’s 4-unit access leg. Dijkstra’s algorithm finds the minimum sum of segment lengths.</p><p>Locations are parcel centers. Each resident inherits the location of their home through resident → building → parcel. Residents of one home are co-located, so their distance is zero.</p><p>Streets are bidirectional. Buildings cannot be crossed between parcels. No traffic or travel time is modeled. Disconnected pairs have no finite walking route. Pairwise routing does not require the external gateway.</p><p>This assignment example uses the original 16 parcels and 40 street links. Scenario changes do not overwrite your saved neighborhood.</p></details>
  <p class="distance-note">Street scenarios follow your selected A and B. Change either location to update the nearby closures. Orange marks closed streets.</p></section>
  <section class="distance-readout" aria-label="Distance comparison"><h2 id="d-pair">Location A / Location B</h2><div class="distance-key"><span>Straight line</span><span>Walking route</span></div>
@@ -47,15 +47,6 @@ export function mountDistance({THREE,scene,camera,controls,renderer,setState}){
  }
  $('d-mode').onchange=()=>{for(const id of ['d-a','d-b'])$(id).value='';populate();scenario();};$('d-a').onchange=$('d-b').onchange=scenario;$('d-scenario').onchange=scenario;
  $('d-animate').onclick=()=>{if(animation){stop();return;}marker.visible=true;animation={start:performance.now()};$('d-animate').textContent='Pause route';const path=result.points;function tick(now){if(!animation)return;let remaining=((now-animation.start)/1000*4)%result.walking;for(let i=1;i<path.length;i++){const p=path[i-1],q=path[i],length=Math.hypot(q[0]-p[0],q[1]-p[1]);if(remaining<=length){const t=length?remaining/length:0;marker.position.set(p[0]+(q[0]-p[0])*t,.9,p[1]+(q[1]-p[1])*t);break;}remaining-=length;}frame=requestAnimationFrame(tick);}frame=requestAnimationFrame(tick);};
- function download(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.click();}
- $('d-record').onclick=()=>{
-   if(!Number.isFinite(result.walking)||!result.walking){$('d-status').textContent='Choose a reachable pair with a nonzero route first.';return;}
-   if(!window.MediaRecorder||!renderer.domElement.captureStream){$('d-status').textContent='Video capture is unavailable in this browser. Use Animate route and screen recording.';return;}
-   if(!animation)$('d-animate').click();const stream=renderer.domElement.captureStream(30),chunks=[];
-   const recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
-   const button=$('d-record');button.disabled=true;$('d-status').textContent='Recording one route cycle…';
-   recorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:recorder.mimeType});const url=URL.createObjectURL(blob);download(url,'neighborhood-route.'+(recorder.mimeType.includes('mp4')?'mp4':'webm'));setTimeout(()=>URL.revokeObjectURL(url),1000);button.disabled=false;$('d-status').textContent='Route animation saved.';};recorder.start();setTimeout(()=>recorder.stop(),Math.ceil(result.walking/4*1000)+500);
- };
  $('d-top').onclick=()=>{camera.position.set(0,72,.01);controls.target.set(0,0,0);controls.update();};
  $('d-perspective').onclick=()=>{camera.position.set(43,43,53);controls.target.set(0,0,0);controls.update();};
  for(const [id,k] of [['d-zoom-in',.85],['d-zoom-out',1.18]])$(id).onclick=()=>{camera.position.multiplyScalar(k);controls.update();};

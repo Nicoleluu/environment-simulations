@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {createExample, transition, summarize, projectParcels, buildingOn, residentsOf, access, actionReason, assertModel, PARK_REACH} from './model.js?v=2';
 const $=id=>document.getElementById(id);
-import {mountDistance} from './distance-view.js?v=5';
+import {mountDistance} from './distance-view.js?v=6';
 const isDistancePage=document.body.classList.contains('distance-page');
 const STORAGE_KEY = 'neighborhood-iteration-2';
 let state = createExample(), storageMessage = 'Saved on this device';
