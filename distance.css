@@ -1,0 +1,26 @@
+.distance-page>header,.distance-page>.overview,.distance-page>.inspector,.distance-page>.bottom,.distance-page>.view-controls{display:none}
+.distance-page{background:#e7eff2;color:#263e49}
+.distance-shell{position:relative;z-index:5;pointer-events:none;height:100dvh;display:grid;grid-template-columns:300px 1fr;grid-template-rows:auto minmax(0,1fr) auto;padding:28px 32px;gap:24px}
+.distance-shell>*{pointer-events:auto}
+.distance-heading{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:20px;pointer-events:none}
+.distance-heading>*{pointer-events:auto}.distance-heading h1{font-size:30px;letter-spacing:-1px}.distance-heading p{margin:6px 0 0;color:#5c7480;font-size:13px}
+.distance-nav{display:flex;align-items:center;gap:16px;font-size:13px}.distance-nav a{color:#294f65;text-decoration:underline;text-underline-offset:4px}
+.distance-panel{align-self:start;background:#fffffff5;border-radius:16px;padding:22px;box-shadow:0 8px 30px #46637910;max-height:100%;overflow:auto}
+.distance-panel h2{font-size:20px;margin-bottom:8px}.distance-panel p{font-size:12px;line-height:1.6;color:#526c78}
+.distance-panel label{display:grid;gap:6px;font-size:12px;margin:14px 0;color:#405c69}
+.distance-panel select{font-size:12px;max-width:none;width:100%;padding:9px;color:#263e49}
+.distance-panel button,.distance-view-controls button{padding:10px 12px;border:1px solid #b7cbd2;border-radius:7px;font-size:12px;background:white}
+.distance-panel button.primary{background:#285d7a;color:white;border-color:#285d7a}
+.distance-panel .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.distance-panel details{border-top:1px solid #d8e3e6;margin-top:20px;padding-top:14px;font-size:12px;line-height:1.65}.distance-panel summary{cursor:pointer;font-weight:600}
+.distance-readout{align-self:end;justify-self:end;width:330px;background:#ffffffef;border-radius:16px;padding:23px;box-shadow:0 8px 30px #46637910;margin-bottom:20px}
+.distance-readout h2{font-size:18px}.distance-metric{margin-top:20px}.distance-metric>div:first-child{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}.distance-metric strong{font-size:27px;font-weight:600}.distance-metric small{font-size:12px}.distance-track{height:7px;background:#e4ecef;margin-top:8px;border-radius:3px;overflow:hidden}.distance-track i{display:block;height:100%;background:#a94878}.distance-metric.walk .distance-track i{background:#176f99}.distance-metric.direct strong{color:#a0386c}.distance-metric.walk strong{color:#176f99}
+#distance-finding{font-size:14px;line-height:1.6;margin:22px 0 0}#distance-units{font-size:11px;line-height:1.6;color:#607781;margin:12px 0 0}
+.distance-footer{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#546f7a;gap:16px}.distance-view-controls{display:flex;gap:7px}.distance-footer p{margin:0}.distance-status{font-size:12px;color:#285d7a;min-height:20px}.distance-panel .distance-note{font-size:11px}
+.distance-key{display:flex;gap:14px;margin-top:18px;font-size:11px}.distance-key span:before{content:'';display:inline-block;width:18px;border-top:3px dashed #a94878;margin-right:5px;vertical-align:middle}.distance-key span:last-child:before{border-top:3px solid #176f99}
+.distance-panel button:focus-visible,.distance-shell a:focus-visible{outline:3px solid #9c4174;outline-offset:3px}
+@media(max-width:850px){.distance-shell{padding:18px;gap:16px;grid-template-columns:250px 1fr}.distance-panel{padding:16px}.distance-readout{width:270px;padding:18px}.distance-nav{gap:10px}.distance-heading h1{font-size:24px}}
+@media(max-width:650px){.distance-page{overflow:auto}.distance-shell{display:flex;flex-wrap:wrap;padding:16px;gap:16px;height:auto;min-height:100dvh}.distance-heading{width:100%;align-items:start;flex-direction:column;gap:12px}.distance-heading h1{font-size:26px}.distance-panel{width:100%;max-height:none;order:3}.distance-readout{width:100%;margin:360px 0 0;order:2}.distance-footer{order:4;flex-wrap:wrap}.distance-page #viewport{height:560px;position:absolute;top:70px}.distance-panel details{margin-bottom:0}.distance-heading p{font-size:12px}}
+@media print{.distance-shell{display:block}.distance-panel{display:none}.distance-readout{margin:400px 0 0}}
+
+@media(min-width:851px){.distance-page #viewport{left:320px;right:330px;top:105px;bottom:85px}.distance-shell{grid-template-columns:270px 1fr}.distance-readout{width:280px}.distance-panel{padding:18px}.distance-heading h1{font-size:28px}}
+.distance-embed .distance-shell{display:none}.distance-embed #viewport{inset:0;position:fixed;height:100dvh}

@@ -1,0 +1,10 @@
+Nicole Lu — Neighborhood: Distance
+
+I extended my Neighborhood simulation to compare straight-line distance and shortest walking distance between two locations or occupants. Residents inherit their home locations through the resident–building–parcel relationship.
+
+The example compares homes P1 and P5. They remain 8 model units apart, but the shortest walking route increases from 24 to 40 units when two streets close. The simulation visualizes both distances, compares them graphically, and animates the computed route. Closing P5’s frontage demonstrates a nearby location with no accessible walking route.
+
+Simulation: https://nicoleluu.github.io/environment-simulations/distance.html
+4-slide deck: https://nicoleluu.github.io/environment-simulations/slides.html
+
+Attach assets/distance/submission.png as the screenshot.

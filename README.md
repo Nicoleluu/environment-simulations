@@ -53,3 +53,18 @@ Changes persist in localStorage on this browser and origin. Storage failures are
 - `app.js`: procedural Three.js objects, route/closure overlays, UI actions, history, browser persistence, and export.
 - `model.test.js`: nine tests covering references, atomic rejection, development, capacity, relocation, disconnection, route updates, serialization, and mixed action sequences.
 - `index.html` / `style.css`: responsive controls, accessible selectors, rules dialog, and scene layout.
+
+
+## October distance assignment — Nicole Lu
+
+Open `distance.html` for the distance study and `slides.html` for the four-slide presentation, including a live route animation on slide 4. The original model remains at `index.html`.
+
+- **Euclidean distance:** straight-line separation between parcel centers in the x/z plane.
+- **Walking distance:** Dijkstra shortest path on the open undirected street graph, with edges split at frontage midpoints and 4-unit parcel access links included. This is a schematic coordinate length, not surveyed meters or travel time.
+- **Occupants:** each resident resolves through their building to its parcel center. Different residents in one home have zero separation, so the induced occupant distance is a pseudometric.
+- **Disconnected pairs:** walking distance is infinite internally and shown as “No route.” The external gateway is not a prerequisite for pairwise routing.
+- **Demonstration:** P1 to P5 is 8 units in a straight line and 24 by walking. Closing V:-16:-4 and V:-8:-4 increases the walk to 40. Closing P5 frontage H:-12:0 makes it unreachable. Scenarios start from the original example and never overwrite the original saved neighborhood.
+- **Interactions:** compare locations or occupants, choose a scenario, switch plan/3D views, animate the computed route, save a screenshot, export measurements, or record a route animation in browsers supporting MediaRecorder. The moving marker traces a route; it does not relocate the resident’s home.
+- **Verification:** `node --test model.test.js distance-model.test.js` covers the existing model plus exact lengths, symmetry, geometric lower bounds, resident mapping, no-route handling, and immutable scenarios. Browser review covers desktop/mobile layouts and occupant/scenario interactions.
+
+The assignment extends the October 1 model. It does not claim that any missed workshop has been separately submitted.
