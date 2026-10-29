@@ -12,7 +12,7 @@ export function distanceBetween(state, fromKey, toKey) {
   const a=locationFor(state,fromKey), b=locationFor(state,toKey);
   if(!a||!b) return null;
   const direct=Math.hypot(a.x-b.x,a.z-b.z);
-  if(a.id===b.id) return {direct:0,walking:0,points:[[a.x,a.z]],a,b,ratio:null};
+  if(a.id===b.id) return {direct:0,walking:0,points:[[a.x,a.z]],streetIds:[],a,b,ratio:null};
   const graph=new Map(), positions=new Map();
   function node(id,x,z){if(!graph.has(id))graph.set(id,[]);positions.set(id,[x,z]);}
   function edge(a,b){const p=positions.get(a),q=positions.get(b),w=Math.hypot(p[0]-q[0],p[1]-q[1]);graph.get(a).push([b,w]);graph.get(b).push([a,w]);}
@@ -32,7 +32,7 @@ export function distanceBetween(state, fromKey, toKey) {
   }
   const walking=dist.get(target)??Infinity,ids=[];
   if(Number.isFinite(walking)){let u=target;while(u){ids.unshift(u);u=prev.get(u);}}
-  return {direct,walking,points:ids.map(id=>positions.get(id)),a,b,ratio:direct?walking/direct:null};
+  return {direct,walking,points:ids.map(id=>positions.get(id)),streetIds:ids.filter(id=>state.streets.some(s=>s.id===id)),a,b,ratio:direct?walking/direct:null};
 }
 
 export function applyScenario(state,scenario){

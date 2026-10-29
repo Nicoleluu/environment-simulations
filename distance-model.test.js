@@ -24,3 +24,15 @@ test('all parcel pairs satisfy symmetry and walking >= straight distance',()=>{
  for(const a of s.parcels)for(const b of s.parcels){const d=distanceBetween(s,'P:'+a.id,'P:'+b.id),r=distanceBetween(s,'P:'+b.id,'P:'+a.id);assert.equal(d.walking,r.walking);assert.ok(d.walking>=d.direct-1e-9);}
  }
 });
+test('custom closures reroute other pairs and reopening restores access',()=>{
+ const state=createExample();
+ const route=()=>distanceBetween(state,'P:2','P:10');
+ assert.equal(route().walking,32);
+ for(const id of ['V:-8:-4','V:0:-4'])state.streets.find(s=>s.id===id).open=false;
+ assert.ok(route().walking>32 && Number.isFinite(route().walking));
+ assert.equal(route().direct,16);
+ assert.ok(route().streetIds.every(id=>state.streets.find(s=>s.id===id).open));
+ state.streets.find(s=>s.id==='H:-4:-8').open=false;
+ assert.equal(route().walking,Infinity);assert.deepEqual(route().streetIds,[]);
+ state.streets.forEach(s=>s.open=true);assert.equal(route().walking,32);
+});
