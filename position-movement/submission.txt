@@ -1,0 +1,10 @@
+Nicole Lu — Neighborhood: Position + Movement
+
+Slide deck: https://nicoleluu.github.io/environment-simulations/position-movement/slides.html
+Simulation: https://nicoleluu.github.io/environment-simulations/position-movement/index.html
+
+This study extends my Neighborhood location system with three positional relationships (left of, between, adjacent) and three movement notions (toward, away from, past). A three-neighbor alignment triggers a meeting signal; a robot's delivery capability triggers a handoff when it reaches a neighboring location. Animated simulation captures are embedded in the slide deck.
+
+Demo: open each of the three scenes and press Play. In the first scene, move B up and down to switch the meeting signal off and on. The rule panel exposes each condition, and Reset clears recorded events.
+
+Implementation uses AI assistance. The simulation is a schematic two-dimensional model; movement paths are illustrative rather than computed street routes.
