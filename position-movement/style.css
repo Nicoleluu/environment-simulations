@@ -6,3 +6,4 @@
 
 .flight-controls{border-top:1px solid #74868b40;margin-top:18px;padding-top:12px}.flight-controls>span{font-size:10px;color:#9baeb6}.flight-controls>div{display:flex;gap:6px;margin-top:9px}.flight-controls button{flex:1;font-size:10px;background:#152b3880;border:1px solid #74868b50;border-radius:2px;padding:7px 5px;color:#d4c295}.flight-controls button:hover:not(:disabled){border-color:#d4b675}.rule-group small{line-height:1.4}#demo{margin-top:14px}
 @media(min-width:901px){.view-tools{top:30px;bottom:auto;flex-direction:row}.view-tools button+button{border-top:0;border-left:1px solid #7c909433}}
+header{pointer-events:none}
