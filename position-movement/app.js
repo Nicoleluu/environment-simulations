@@ -18,7 +18,7 @@ if(name==='passing'){line({x:state.b.x,z:-10},{x:state.b.x,z:12},'#ba7657',2,[4,
 if(near){line(state.r,state.b,'#c07a26',8);pill('ADJACENT / HANDOFF',X(state.b.x),Y(state.b.z)-45,'#a36a22');}
 for(const key of ['a','b','c','r']){const p=state[key];ctx.fillStyle=colors[key];ctx.strokeStyle='#f8f5e9';ctx.lineWidth=5;ctx.beginPath();if(key==='r')ctx.rect(X(p.x)-20,Y(p.z)-20,40,40);else ctx.arc(X(p.x),Y(p.z),24,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=key==='r'?'#3b412b':'#fff';ctx.textAlign='center';ctx.font='bold 18px Arial';ctx.fillText(key.toUpperCase(),X(p.x),Y(p.z)+6);}
 ctx.font='14px Arial';ctx.textAlign='left';ctx.fillStyle='#4a6353';ctx.fillText('A + C  NEIGHBORS     B  RECIPIENT     R  DELIVERY ROBOT',42,680);ctx.fillText('R → B  '+distance(state.r,state.b).toFixed(1)+' units',42,705);
-pill(passed?'PAST B / CROSSING RECORDED':m.toward?'TOWARD B':m.away?'AWAY FROM B':'ROBOT STATIONARY',730,705,'#526849');
+pill(passed?(m.away?'AWAY FROM B / PASSED B':'PAST B / CROSSING RECORDED'):m.toward?'TOWARD B':m.away?'AWAY FROM B':'ROBOT STATIONARY',730,705,'#526849');
 const rules=(items)=>items.map(([label,on])=>`<div class="rule ${on?'on':''}"><span>${label}</span><b>${on?'TRUE':'FALSE'}</b></div>`).join('');
 $('#position').innerHTML=rules([['A is left of B',left],['B is between A and C',middle],['Robot is adjacent to B',near]]);$('#movement').innerHTML=rules([['Toward B',m.toward],['Away from B',m.away],['Past B (recorded)',passed]]);
 $('#action').textContent=delivered?'Parcel delivered. One handoff recorded.':middle?'Meeting signal on: B connects the two neighbors.':'Waiting for a meeting or a delivery condition.';
