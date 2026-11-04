@@ -14,4 +14,24 @@ export function route(config,from,to){const queue=[[from]],seen=new Set([from]);
 export function alignment(from,to,current){let best=null;for(let n=0;n<8;n++){const c=[n&1,(n>>1)&1,(n>>2)&1],path=route(c,from,to);if(path){const cost=c.reduce((s,v,i)=>s+(v!==current[i]),0);if(!best||cost<best.cost)best={config:c,path,cost};}}return best;}
 export const dist=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
 export function positionOn(path,t){const lengths=path.slice(1).map((id,i)=>dist(landings[path[i]].p,landings[id].p));let length=lengths.reduce((a,b)=>a+b,0),d=Math.max(0,Math.min(1,t))*length;for(let i=0;i<lengths.length;i++){if(d<=lengths[i]||i===lengths.length-1){let f=d/lengths[i],a=landings[path[i]].p,b=landings[path[i+1]].p;return a.map((v,j)=>v+(b[j]-v)*f);}d-=lengths[i];}return [...landings[path[0]].p];}
-export function conditions(state,p,previous){const target=landings[state.destination].p;const path=state.travel?.path||route(state.config,state.at,state.destination);return {adjacent:state.at!==state.destination&&edges(state.config).some(e=>e.includes(state.at)&&e.includes(state.destination))&&!state.travel,above:p[1]>landings.entry.p[1]+.1,between:!!state.travel&&state.travel.t>0&&state.travel.t<1,toward:previous?dist(p,target)<dist(previous,target)-1e-5:false,ascending:previous?p[1]>previous[1]+1e-5:false,past:state.passed,reachable:!!path};}
+export function conditions(state,p,previous,{rotating=false}={}){const target=landings[state.destination].p;const path=state.travel?.path||route(state.config,state.at,state.destination);return {adjacent:!rotating&&state.at!==state.destination&&edges(state.config).some(e=>e.includes(state.at)&&e.includes(state.destination))&&!state.travel,above:p[1]>landings.entry.p[1]+.1,between:!!state.travel&&betweenFlightLandings(state.travel.path,p),toward:previous?dist(p,target)<dist(previous,target)-1e-5:false,ascending:previous?p[1]>previous[1]+1e-5:false,past:state.passed,reachable:!rotating&&!!path};}
+
+// A single configuration cannot connect both wings. Return to the entrance
+// before changing the Grand Stair, rather than offering a no-op alignment.
+export function alignmentPlan(state){
+ const direct=alignment(state.at,state.destination,state.config);
+ if(direct)return {kind:'direct',...direct};
+ const via=alignment(state.at,'entry',state.config);
+ return via?{kind:'via-entry',...via}:null;
+}
+export function lanternActive(position,destination,hasLantern,isJourneyOrArrival){
+ return !!hasLantern&&!!isJourneyOrArrival&&dist(position,landings[destination].p)<1.2;
+}
+
+// Strict 3D betweenness on a single flight, excluding either landing.
+export function betweenFlightLandings(path,p){
+ return path.slice(1).some((id,i)=>{
+  const a=landings[path[i]].p,b=landings[id].p,length=dist(a,b);
+  return dist(a,p)>1e-5&&dist(p,b)>1e-5&&Math.abs(dist(a,p)+dist(p,b)-length)<1e-6;
+ });
+}
