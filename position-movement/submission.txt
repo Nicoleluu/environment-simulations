@@ -1,10 +1,12 @@
-Nicole Lu — Neighborhood: Position + Movement
+Nicole Lu — The Wandering Stair / Aster Academy
 
 Slide deck: https://nicoleluu.github.io/environment-simulations/position-movement/slides.html
 Simulation: https://nicoleluu.github.io/environment-simulations/position-movement/index.html
 
-This study extends my Neighborhood location system with three positional relationships (left of, between, adjacent) and three movement notions (toward, away from, past). A three-neighbor alignment triggers a meeting signal; a robot's delivery capability triggers a handoff when it reaches a neighboring location. Animated simulation captures are embedded in the slide deck.
+An original magical academy where rotating staircases change the relationships between seven fixed landings. Three position conditions—adjacent, above, and between along a path—are paired with three movement conditions: toward, ascending, and past the journey midpoint.
 
-Demo: open each of the three scenes and press Play. In the first scene, move B up and down to switch the meeting signal off and on. The rule panel exposes each condition, and Reset clears recorded events.
+An aligned stair configuration reveals a traversable route. A student carries an intrinsic lantern spell that awakens the selected destination's portal on approach. The six-slide deck includes diagrams and recorded animations of stair rotation, ascent, and arrival.
 
-Implementation uses AI assistance. The simulation is a schematic two-dimensional model; movement paths are illustrative rather than computed street routes.
+Demo: choose Astral archive for direct adjacency; travel and return. Shift the stairs to disconnect the observatory. Choose Winter garden, align the route, and watch the lantern wake its portal. Individual flights can be clicked to rotate, or operated through Field notes. Occupied flights cannot rotate.
+
+Built with AI assistance. Coordinates are schematic; decorative galleries are not traversable graph edges.
