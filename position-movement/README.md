@@ -47,3 +47,13 @@ The simulation UI contains no presentation navigation or Field notes dialog. Exi
 - Verification: 12 model tests, including all 8 configurations × 7 origins × 7 destinations, geometric endpoint checks, lantern capability guards, pause/rest/descending distinctions, and strict betweenness. Browser audit verifies navigation removal, individual stair controls, mid-turn disconnection, travel locks, pause/resume, both arrival types, cross-wing recovery, reset, full guided journey, mobile width, and no JavaScript errors.
 
 The assignment also requests class demonstration and thread submissions. Those external actions are not performed by the simulation and are not claimed complete by this audit.
+
+## Academy life expansion
+
+The hall now includes furnished reading tables and shelves, dining commons, a potion workshop, a glazed conservatory, an owl post with parcels, upper-gallery astronomy equipment, notices and luggage. Eighteen moving residents and five stationed specialists are present by default, with three postal owls, two familiars, and a resident ghost. Quiet study has eight moving residents; Evening gathering has twenty-four.
+
+Moving residents follow a connected ground-floor walkway graph, choose destinations, dwell at arrivals and resume their rounds. Same-direction travelers maintain a 0.6-unit following gap; opposing movement uses offset lanes. A resident yields when within 1.4 units of the user's traveler on the ground floor. This is a simplified walkway model, not full crowd collision physics. NPCs do not use the movable stair flights; the active traveler remains the stair simulation's controlled agent.
+
+The Academy life panel controls resident population, time scale and pause; its inspector reports the selected actor's actual current state, destination and nearest resident. Clicking a character opens the same inspector; the dropdown provides keyboard access. Stationed professors have fixed work roles. Owls follow a post–archive aerial route, and delivery counts increase on actual archive arrivals. Ghost and familiar paths are ambient routines. Pausing residents freezes their simulation time, movement and mail deliveries independently of the user's journey.
+
+Five additional pure-model tests verify walkway connectivity, sustained arrival/dwell/departure cycles, pause invariance, traveler yielding and inspection data. Existing twelve stair/position/movement tests remain in place.

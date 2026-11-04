@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCampus,stepCampus,campusRoute,stops,inspectAgent} from './campus-model.js';
+test('all staffed places connect through the ground walkways',()=>{for(const a of Object.keys(stops))for(const b of Object.keys(stops))assert(campusRoute(a,b));});
+test('residents walk, arrive, dwell and choose subsequent destinations',()=>{const c=createCampus(18);for(let i=0;i<2400;i++)stepCampus(c,.05);assert(c.agents.reduce((sum,a)=>sum+a.completed,0)>10);for(const a of c.agents){assert(a.p.every(Number.isFinite));assert(a.p[1]===0);assert(stops[a.destination]);}});
+test('pause preserves both time and positions',()=>{const c=createCampus(8),before=structuredClone(c);stepCampus(c,10,{paused:true});assert.deepEqual(c,before);});
+test('traveler proximity produces a real yielding state',()=>{const c=createCampus(1);stepCampus(c,.01);const p=c.agents[0].p;stepCampus(c,.1,{visitor:p});assert.equal(c.agents[0].status,'Yielding to traveler');});
+test('inspection describes the actual agent and nearest resident',()=>{const c=createCampus(8),info=inspectAgent(c.agents[0],c,[0,0,0]);assert.equal(info.name,c.agents[0].name);assert(info.nearest.distance>=0);assert(info.visitorDistance>=0);});
